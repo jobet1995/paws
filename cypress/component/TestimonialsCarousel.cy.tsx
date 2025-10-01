@@ -23,6 +23,7 @@ const testimonials: Testimonial[] = [
 
 describe('<TestimonialsCarousel />', () => {
   beforeEach(() => {
+    // Mock timers to control setInterval for autoplay
     cy.clock();
     cy.mount(<TestimonialsCarousel testimonials={testimonials} />);
   });
@@ -34,19 +35,20 @@ describe('<TestimonialsCarousel />', () => {
 
   it('navigates with next and previous buttons', () => {
     cy.get('button[aria-label="Next testimonial"]').click({ force: true });
-    cy.tick(301); // Wait for CSS transition to complete
+    // Tick the clock to allow React's scheduler to run and re-render the component
+    cy.tick(1); 
     cy.get('h3').should('contain', 'Jane Smith');
     cy.get('p.text-amber-600').should('contain', 'Adopted Whiskers');
 
     cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
-    cy.tick(301); // Wait for CSS transition to complete
+    cy.tick(1);
     cy.get('h3').should('contain', 'John Doe');
     cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
   });
 
   it('navigates with indicator dots', () => {
     cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
-    cy.tick(301); // Wait for CSS transition to complete
+    cy.tick(1);
     cy.get('h3').should('contain', 'Peter Jones');
     cy.get('p.text-amber-600').should('contain', 'Adopted Rocky');
   });
