@@ -1,16 +1,27 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
-import { testimonials } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
-export default function TestimonialsCarousel() {
-  const [currentIndex, setCurrentIndex] = useState(0);
+export interface Testimonial {
+  name: string;
+  animal: string;
+  image: string;
+  text: string;
+}
 
-  const next = () => {
+export default function TestimonialsCarousel({ testimonials }: { testimonials: Testimonial[] }) {
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  const next = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
+  }, [testimonials.length]);
 
   const prev = () => {
     setCurrentIndex(
@@ -19,12 +30,19 @@ export default function TestimonialsCarousel() {
   };
 
   useEffect(() => {
-    const timer = setInterval(next, 5000);
-    return () => clearInterval(timer);
-  }, []);
+    if (!isPaused) {
+      const timer = setInterval(next, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [isPaused, next]);
 
   return (
-    <div className="bg-amber-50 py-16">
+    <div 
+      className="bg-amber-50 py-16"
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+      data-testid="testimonials-carousel"
+    >
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
           Happy Tails
