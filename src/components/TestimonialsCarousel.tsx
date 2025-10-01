@@ -6,6 +6,11 @@ import { testimonials } from '@/lib/data';
 import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 export default function TestimonialsCarousel() {
+  // Handle case where there are no testimonials to prevent crashing
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
@@ -30,10 +35,10 @@ export default function TestimonialsCarousel() {
           Happy Tails
         </h2>
 
-        <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
+        <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12 flex flex-col min-h-[450px]">
           <Quote className="absolute top-6 left-6 h-12 w-12 text-amber-200" />
 
-          <div className="relative">
+          <div className="relative flex-grow">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
               <div className="relative w-24 h-24 rounded-full border-4 border-amber-200 overflow-hidden">
                 <Image
@@ -54,12 +59,12 @@ export default function TestimonialsCarousel() {
               </div>
             </div>
 
-            <p className="text-gray-700 text-lg leading-relaxed italic mb-8">
+            <p className="text-gray-700 text-lg leading-relaxed italic">
               &ldquo;{testimonials[currentIndex].text}&rdquo;
             </p>
           </div>
 
-          <div className="relative z-10 flex justify-between items-center">
+          <div className="flex-shrink-0 pt-8 flex justify-between items-center">
             <button
               onClick={prev}
               className="p-2 rounded-full bg-amber-100 hover:bg-amber-200 transition-colors"
