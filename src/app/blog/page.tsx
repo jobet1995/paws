@@ -3,15 +3,20 @@
 import { useState, useEffect } from 'react';
 import matter from 'gray-matter';
 
+interface PostData {
+  title: string;
+  date: string;
+}
+
 const BlogPost = () => {
-  const [post, setPost] = useState<{ data: any; content: string } | null>(null);
+  const [post, setPost] = useState<{ data: PostData; content: string } | null>(null);
 
   useEffect(() => {
     const fetchPost = async () => {
       const response = await fetch('/api/blog');
       const data = await response.json();
       const { data: frontmatter, content } = matter(data.content);
-      setPost({ data: frontmatter, content });
+      setPost({ data: frontmatter as PostData, content });
     };
 
     fetchPost();
