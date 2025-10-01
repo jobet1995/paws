@@ -59,7 +59,7 @@ export default function TestimonialsCarousel() {
             </p>
           </div>
 
-          <div className="flex justify-between items-center">
+          <div className="relative z-10 flex justify-between items-center">
             <button
               onClick={prev}
               className="p-2 rounded-full bg-amber-100 hover:bg-amber-200 transition-colors"

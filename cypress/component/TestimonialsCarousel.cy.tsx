@@ -16,7 +16,7 @@ describe('<TestimonialsCarousel />', () => {
       .and('be.gt', 0);
   });
 
-  it('navigates to the next and previous testimonials', () => {
+  it('navigates to the next and previous testimonials without being covered', () => {
     // Initial: Jennifer Williams
     cy.get('h3').should('contain', 'Jennifer Williams');
 
