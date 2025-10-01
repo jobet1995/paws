@@ -1,9 +1,9 @@
-"use client";
+'use client';
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
-import { testimonials } from "@/lib/data";
-import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import { testimonials } from '@/lib/data';
+import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
 
 export default function TestimonialsCarousel() {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -33,7 +33,7 @@ export default function TestimonialsCarousel() {
         <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <Quote className="absolute top-6 left-6 h-12 w-12 text-amber-200" />
 
-          <div className="relative z-10">
+          <div className="relative">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
               <div className="relative w-24 h-24 rounded-full border-4 border-amber-200 overflow-hidden">
                 <Image
@@ -75,8 +75,8 @@ export default function TestimonialsCarousel() {
                   onClick={() => setCurrentIndex(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === currentIndex
-                      ? "w-8 bg-amber-600"
-                      : "w-2 bg-amber-300"
+                      ? 'w-8 bg-amber-600'
+                      : 'w-2 bg-amber-300'
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
