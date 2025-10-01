@@ -12,29 +12,35 @@ export interface Testimonial {
 }
 
 export default function TestimonialsCarousel({ testimonials }: { testimonials: Testimonial[] }) {
-  if (!testimonials || testimonials.length === 0) {
-    return null;
-  }
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
+  const testimonialsLength = testimonials ? testimonials.length : 0;
+
   const next = useCallback(() => {
-    setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  }, [testimonials.length]);
+    if (testimonialsLength > 0) {
+      setCurrentIndex((prev) => (prev + 1) % testimonialsLength);
+    }
+  }, [testimonialsLength]);
 
   const prev = () => {
-    setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
-    );
+    if (testimonialsLength > 0) {
+      setCurrentIndex(
+        (prev) => (prev - 1 + testimonialsLength) % testimonialsLength,
+      );
+    }
   };
 
   useEffect(() => {
-    if (!isPaused) {
+    if (!isPaused && testimonialsLength > 0) {
       const timer = setInterval(next, 5000);
       return () => clearInterval(timer);
     }
-  }, [isPaused, next]);
+  }, [isPaused, next, testimonialsLength]);
+
+  if (testimonialsLength === 0) {
+    return null;
+  }
 
   return (
     <div 
