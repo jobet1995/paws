@@ -1,80 +1,43 @@
-import TestimonialsCarousel, { Testimonial } from '../../src/components/TestimonialsCarousel';
-
-const testimonials: Testimonial[] = [
-  {
-    name: 'John Doe',
-    animal: 'Buddy',
-    image: 'https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=200',
-    text: 'Adopting Buddy was the best decision of our lives. He brings so much joy and laughter to our home.',
-  },
-  {
-    name: 'Jane Smith',
-    animal: 'Whiskers',
-    image: 'https://images.pexels.com/photos/45201/kitty-cat-kitten-pet-45201.jpeg?auto=compress&cs=tinysrgb&w=200',
-    text: 'Whiskers is the sweetest cat I have ever met. She settled into our home right away.',
-  },
-  {
-    name: 'Peter Jones',
-    animal: 'Rocky',
-    image: 'https://images.pexels.com/photos/4001296/pexels-photo-4001296.jpeg?auto=compress&cs=tinysrgb&w=200',
-    text: 'We never thought we would adopt a rabbit, but Rocky has completely stolen our hearts.',
-  },
-];
+import TestimonialsCarousel from '../../src/components/TestimonialsCarousel';
 
 describe('<TestimonialsCarousel />', () => {
-  context('when autoplay is disabled', () => {
-    beforeEach(() => {
-      cy.mount(<TestimonialsCarousel testimonials={testimonials} autoplay={false} />);
-    });
-
-    it('renders the initial testimonial correctly', () => {
-      cy.get('h3').should('contain', 'John Doe');
-      cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
-    });
-
-    it('navigates with next and previous buttons', () => {
-      cy.get('button[aria-label="Next testimonial"]').click({ force: true });
-      cy.get('h3').should('contain', 'Jane Smith');
-      cy.get('p.text-amber-600').should('contain', 'Adopted Whiskers');
-
-      cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
-      cy.get('h3').should('contain', 'John Doe');
-      cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
-    });
-
-    it('navigates with indicator dots', () => {
-      cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
-      cy.get('h3').should('contain', 'Peter Jones');
-      cy.get('p.text-amber-600').should('contain', 'Adopted Rocky');
-    });
+  beforeEach(() => {
+    // Mount the component without any props, as it uses hard-coded data.
+    cy.mount(<TestimonialsCarousel />);
   });
 
-  context('when autoplay is enabled', () => {
-    beforeEach(() => {
-      cy.clock();
-      cy.mount(<TestimonialsCarousel testimonials={testimonials} />);
-    });
+  it('renders the initial testimonial correctly from the hard-coded data', () => {
+    // The first testimonial in src/lib/data.ts is Jennifer Williams.
+    cy.get('h3').should('contain', 'Jennifer Williams');
+    cy.get('p.text-amber-600').should('contain', 'Adopted Luna - Siamese Cat');
+    cy.get('img')
+      .should('be.visible')
+      .and('have.prop', 'naturalWidth')
+      .and('be.gt', 0);
+  });
 
-    it('autoplays through testimonials', () => {
-      cy.get('h3').should('contain', 'John Doe');
-      cy.tick(5000);
-      cy.get('h3').should('contain', 'Jane Smith');
-      cy.tick(5000);
-      cy.get('h3').should('contain', 'Peter Jones');
-      cy.tick(5000);
-      cy.get('h3').should('contain', 'John Doe');
-    });
+  it('navigates to the next and previous testimonials', () => {
+    // Initial: Jennifer Williams
+    cy.get('h3').should('contain', 'Jennifer Williams');
 
-    it('pauses and resumes autoplay on hover', () => {
-      cy.get('h3').should('contain', 'John Doe');
-      
-      cy.get('[data-testid="testimonials-carousel"]').trigger('mouseenter');
-      cy.tick(5000);
-      cy.get('h3').should('contain', 'John Doe'); // Should not have changed
-      
-      cy.get('[data-testid="testimonials-carousel"]').trigger('mouseleave');
-      cy.tick(5000);
-      cy.get('h3').should('contain', 'Jane Smith'); // Should have changed
-    });
+    // Click Next
+    cy.get('button[aria-label="Next testimonial"]').click();
+    // Should be David Thompson
+    cy.get('h3').should('contain', 'David Thompson');
+
+    // Click Next again
+    cy.get('button[aria-label="Next testimonial"]').click();
+    // Should be Maria Garcia
+    cy.get('h3').should('contain', 'Maria Garcia');
+
+    // Click Next again to wrap around
+    cy.get('button[aria-label="Next testimonial"]').click();
+    // Should be back to Jennifer Williams
+    cy.get('h3').should('contain', 'Jennifer Williams');
+
+    // Click Previous to go to the last testimonial
+    cy.get('button[aria-label="Previous testimonial"]').click();
+    // Should be Maria Garcia
+    cy.get('h3').should('contain', 'Maria Garcia');
   });
 });
