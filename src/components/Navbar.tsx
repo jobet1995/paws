@@ -42,6 +42,9 @@ export default function Navbar() {
                 </Link>
               );
             })}
+          </div>
+
+          <div className="hidden md:flex items-center">
             <Link
               href="/donate"
               className="bg-amber-600 text-white px-6 py-2 rounded-full hover:bg-amber-700 transition-all duration-200 shadow-md hover:shadow-lg font-semibold">
