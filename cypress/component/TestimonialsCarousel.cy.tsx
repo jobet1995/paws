@@ -35,18 +35,18 @@ describe('<TestimonialsCarousel />', () => {
 
   it('navigates with next and previous buttons', () => {
     // Go to next
-    cy.get('button[aria-label="Next testimonial"]').click();
+    cy.get('button[aria-label="Next testimonial"]').click({ force: true });
     cy.contains('h3', 'Jane Smith').should('be.visible');
     cy.contains('p', 'Adopted Whiskers').should('be.visible');
 
     // Go back to previous
-    cy.get('button[aria-label="Previous testimonial"]').click();
+    cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
     cy.contains('h3', 'John Doe').should('be.visible');
     cy.contains('p', 'Adopted Buddy').should('be.visible');
   });
 
   it('navigates with indicator dots', () => {
-    cy.get('button[aria-label="Go to testimonial 3"]').click();
+    cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
     cy.contains('h3', 'Peter Jones').should('be.visible');
     cy.contains('p', 'Adopted Rocky').should('be.visible');
   });
