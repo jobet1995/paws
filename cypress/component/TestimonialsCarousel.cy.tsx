@@ -22,56 +22,59 @@ const testimonials: Testimonial[] = [
 ];
 
 describe('<TestimonialsCarousel />', () => {
-  beforeEach(() => {
-    // Mock timers to control setInterval for autoplay
-    cy.clock();
-    cy.mount(<TestimonialsCarousel testimonials={testimonials} />);
+  context('when autoplay is disabled', () => {
+    beforeEach(() => {
+      cy.mount(<TestimonialsCarousel testimonials={testimonials} autoplay={false} />);
+    });
+
+    it('renders the initial testimonial correctly', () => {
+      cy.get('h3').should('contain', 'John Doe');
+      cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
+    });
+
+    it('navigates with next and previous buttons', () => {
+      cy.get('button[aria-label="Next testimonial"]').click({ force: true });
+      cy.get('h3').should('contain', 'Jane Smith');
+      cy.get('p.text-amber-600').should('contain', 'Adopted Whiskers');
+
+      cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
+      cy.get('h3').should('contain', 'John Doe');
+      cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
+    });
+
+    it('navigates with indicator dots', () => {
+      cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
+      cy.get('h3').should('contain', 'Peter Jones');
+      cy.get('p.text-amber-600').should('contain', 'Adopted Rocky');
+    });
   });
 
-  it('renders the initial testimonial correctly', () => {
-    cy.get('h3').should('contain', 'John Doe');
-    cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
-  });
+  context('when autoplay is enabled', () => {
+    beforeEach(() => {
+      cy.clock();
+      cy.mount(<TestimonialsCarousel testimonials={testimonials} />);
+    });
 
-  it('navigates with next and previous buttons', () => {
-    cy.get('button[aria-label="Next testimonial"]').click({ force: true });
-    // Tick the clock to allow React's scheduler to run and re-render the component
-    cy.tick(1); 
-    cy.get('h3').should('contain', 'Jane Smith');
-    cy.get('p.text-amber-600').should('contain', 'Adopted Whiskers');
+    it('autoplays through testimonials', () => {
+      cy.get('h3').should('contain', 'John Doe');
+      cy.tick(5000);
+      cy.get('h3').should('contain', 'Jane Smith');
+      cy.tick(5000);
+      cy.get('h3').should('contain', 'Peter Jones');
+      cy.tick(5000);
+      cy.get('h3').should('contain', 'John Doe');
+    });
 
-    cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
-    cy.tick(1);
-    cy.get('h3').should('contain', 'John Doe');
-    cy.get('p.text-amber-600').should('contain', 'Adopted Buddy');
-  });
-
-  it('navigates with indicator dots', () => {
-    cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
-    cy.tick(1);
-    cy.get('h3').should('contain', 'Peter Jones');
-    cy.get('p.text-amber-600').should('contain', 'Adopted Rocky');
-  });
-
-  it('autoplays through testimonials', () => {
-    cy.get('h3').should('contain', 'John Doe');
-    cy.tick(5000);
-    cy.get('h3').should('contain', 'Jane Smith');
-    cy.tick(5000);
-    cy.get('h3').should('contain', 'Peter Jones');
-    cy.tick(5000);
-    cy.get('h3').should('contain', 'John Doe');
-  });
-
-  it('pauses and resumes autoplay on hover', () => {
-    cy.get('h3').should('contain', 'John Doe');
-    
-    cy.get('[data-testid="testimonials-carousel"]').trigger('mouseenter');
-    cy.tick(5000);
-    cy.get('h3').should('contain', 'John Doe'); // Should not have changed
-    
-    cy.get('[data-testid="testimonials-carousel"]').trigger('mouseleave');
-    cy.tick(5000);
-    cy.get('h3').should('contain', 'Jane Smith'); // Should have changed
+    it('pauses and resumes autoplay on hover', () => {
+      cy.get('h3').should('contain', 'John Doe');
+      
+      cy.get('[data-testid="testimonials-carousel"]').trigger('mouseenter');
+      cy.tick(5000);
+      cy.get('h3').should('contain', 'John Doe'); // Should not have changed
+      
+      cy.get('[data-testid="testimonials-carousel"]').trigger('mouseleave');
+      cy.tick(5000);
+      cy.get('h3').should('contain', 'Jane Smith'); // Should have changed
+    });
   });
 });

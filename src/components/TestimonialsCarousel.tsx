@@ -11,7 +11,7 @@ export interface Testimonial {
   text: string;
 }
 
-export default function TestimonialsCarousel({ testimonials }: { testimonials: Testimonial[] }) {
+export default function TestimonialsCarousel({ testimonials, autoplay = true }: { testimonials: Testimonial[], autoplay?: boolean }) {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
 
@@ -32,11 +32,11 @@ export default function TestimonialsCarousel({ testimonials }: { testimonials: T
   };
 
   useEffect(() => {
-    if (!isPaused && testimonialsLength > 0) {
+    if (autoplay && !isPaused && testimonialsLength > 0) {
       const timer = setInterval(next, 5000);
       return () => clearInterval(timer);
     }
-  }, [isPaused, next, testimonialsLength]);
+  }, [autoplay, isPaused, next, testimonialsLength, currentIndex]);
 
   if (testimonialsLength === 0) {
     return null;
