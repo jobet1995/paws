@@ -27,53 +27,53 @@ describe('<TestimonialsCarousel />', () => {
   });
 
   it('renders the initial testimonial correctly', () => {
-    cy.contains('h3', 'John Doe').should('be.visible');
-    cy.contains('p', 'Adopted Buddy').should('be.visible');
+    cy.get('h3').should('contain', 'John Doe').and('be.visible');
+    cy.get('p.text-amber-600').should('contain', 'Adopted Buddy').and('be.visible');
     cy.get('img[alt="John Doe"]').should('be.visible');
-    cy.contains('p', 'Adopting Buddy was the best decision').should('be.visible');
+    cy.get('p.text-gray-700').should('contain', 'Adopting Buddy was the best decision').and('be.visible');
   });
 
   it('navigates with next and previous buttons', () => {
     // Go to next
     cy.get('button[aria-label="Next testimonial"]').click({ force: true });
-    cy.contains('h3', 'Jane Smith').should('be.visible');
-    cy.contains('p', 'Adopted Whiskers').should('be.visible');
+    cy.get('h3').should('contain', 'Jane Smith').and('be.visible');
+    cy.get('p.text-amber-600').should('contain', 'Adopted Whiskers').and('be.visible');
 
     // Go back to previous
     cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
-    cy.contains('h3', 'John Doe').should('be.visible');
-    cy.contains('p', 'Adopted Buddy').should('be.visible');
+    cy.get('h3').should('contain', 'John Doe').and('be.visible');
+    cy.get('p.text-amber-600').should('contain', 'Adopted Buddy').and('be.visible');
   });
 
   it('navigates with indicator dots', () => {
     cy.get('button[aria-label="Go to testimonial 3"]').click({ force: true });
-    cy.contains('h3', 'Peter Jones').should('be.visible');
-    cy.contains('p', 'Adopted Rocky').should('be.visible');
+    cy.get('h3').should('contain', 'Peter Jones').and('be.visible');
+    cy.get('p.text-amber-600').should('contain', 'Adopted Rocky').and('be.visible');
   });
 
   it('autoplays through testimonials', () => {
     cy.clock();
-    cy.contains('h3', 'John Doe').should('be.visible');
+    cy.get('h3').should('contain', 'John Doe').and('be.visible');
     cy.tick(5000);
-    cy.contains('h3', 'Jane Smith').should('be.visible');
+    cy.get('h3').should('contain', 'Jane Smith').and('be.visible');
     cy.tick(5000);
-    cy.contains('h3', 'Peter Jones').should('be.visible');
+    cy.get('h3').should('contain', 'Peter Jones').and('be.visible');
     cy.tick(5000);
-    cy.contains('h3', 'John Doe').should('be.visible'); // Wraps around
+    cy.get('h3').should('contain', 'John Doe').and('be.visible'); // Wraps around
   });
 
   it('pauses and resumes autoplay on hover', () => {
     cy.clock();
-    cy.contains('h3', 'John Doe').should('be.visible');
+    cy.get('h3').should('contain', 'John Doe').and('be.visible');
     
     // Pause on hover
     cy.get('[data-testid="testimonials-carousel"]').trigger('mouseenter');
     cy.tick(5000);
-    cy.contains('h3', 'John Doe').should('be.visible'); // Should not have changed
+    cy.get('h3').should('contain', 'John Doe').and('be.visible'); // Should not have changed
     
     // Resume on mouse leave
     cy.get('[data-testid="testimonials-carousel"]').trigger('mouseleave');
     cy.tick(5000);
-    cy.contains('h3', 'Jane Smith').should('be.visible'); // Should have changed
+    cy.get('h3').should('contain', 'Jane Smith').and('be.visible'); // Should have changed
   });
 });
