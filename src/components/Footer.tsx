@@ -144,18 +144,21 @@ export default function Footer() {
             <div className="flex space-x-4 mt-6">
               <a
                 href="#"
+                aria-label="Facebook"
                 className="text-gray-400 hover:text-amber-500 transition-colors duration-200"
               >
                 <Facebook className="h-6 w-6" />
               </a>
               <a
                 href="#"
+                aria-label="Instagram"
                 className="text-gray-400 hover:text-amber-500 transition-colors duration-200"
               >
                 <Instagram className="h-6 w-6" />
               </a>
               <a
                 href="#"
+                aria-label="Twitter"
                 className="text-gray-400 hover:text-amber-500 transition-colors duration-200"
               >
                 <Twitter className="h-6 w-6" />
