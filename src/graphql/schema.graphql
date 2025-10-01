@@ -3,6 +3,7 @@ type Post {
   date: String
   content: String
   author: String
+  image: String
 }
 
 type Query {
