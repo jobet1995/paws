@@ -12,8 +12,8 @@ describe('<Navbar />', () => {
     cy.viewport('iphone-6');
     cy.mount(<Navbar />);
     cy.get('button[aria-label="Toggle menu"]').click();
-    cy.contains('a', 'Animals').should('be.visible');
+    cy.contains('a.block', 'Animals').should('be.visible');
     cy.get('button[aria-label="Toggle menu"]').click();
-    cy.contains('a', 'Animals').should('not.be.visible');
+    cy.contains('a.block', 'Animals').should('not.exist');
   });
 });
