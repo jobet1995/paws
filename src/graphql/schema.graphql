@@ -1,4 +1,12 @@
+type Post {
+  title: String
+  date: String
+  content: String
+  author: String
+  image: String
+}
 
-  type Query {
-    hello: String
-  }
+type Query {
+  posts: [Post]
+  hello: String
+}
