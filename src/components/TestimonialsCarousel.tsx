@@ -1,44 +1,35 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { testimonials } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
+  // --- HOOKS MUST BE CALLED AT THE TOP LEVEL ---
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  const next = () => {
+  const next = useCallback(() => {
+    if (testimonials.length === 0) return;
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
-  };
+  }, []); // Dependency on testimonials.length removed as it's a static import
 
-  const prev = () => {
+  const prev = useCallback(() => {
+    if (testimonials.length === 0) return;
     setCurrentIndex(
       (prev) => (prev - 1 + testimonials.length) % testimonials.length
     );
-  };
+  }, []); // Dependency on testimonials.length removed as it's a static import
 
   useEffect(() => {
-    // If there are no testimonials, do nothing.
-    if (testimonials.length === 0) {
-      return;
+    // The effect sets up the timer. It depends on the memoized `next` function.
+    if (testimonials.length > 0) {
+      const timer = setInterval(next, 5000);
+      return () => clearInterval(timer);
     }
+  }, [next]); // The dependency array size is now constant.
 
-    // Set up a timer that advances the carousel to the next slide.
-    const timerId = setInterval(() => {
-      // Use the functional update form of `setCurrentIndex` to ensure we always
-      // get the latest state without needing it as a dependency.
-      setCurrentIndex((prevIndex) => (prevIndex + 1) % testimonials.length);
-    }, 5000);
-
-    // The cleanup function clears the timer when the component unmounts
-    // or when the effect re-runs.
-    return () => clearInterval(timerId);
-
-    // This effect depends on the number of testimonials. If the data loads
-    // asynchronously, this will ensure the timer is correctly set up.
-  }, [testimonials.length]);
-
+  // --- CONDITIONAL RETURN HAPPENS AFTER HOOKS ---
   if (!testimonials || testimonials.length === 0) {
     return null;
   }
