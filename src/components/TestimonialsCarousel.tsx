@@ -19,11 +19,23 @@ export default function TestimonialsCarousel() {
   };
 
   useEffect(() => {
-    if (testimonials.length > 0) {
-      const timer = setInterval(next, 5000);
-      return () => clearInterval(timer);
+    // Only set up the interval if there are testimonials. This prevents errors
+    // when the data is not yet available or the array is empty.
+    if (testimonials.length === 0) {
+      return;
     }
-  }, [currentIndex]);
+
+    // Set up the timer to advance the slide.
+    const timerId = setInterval(next, 5000);
+
+    // The cleanup function clears the timer when the component unmounts
+    // or when the effect re-runs, preventing memory leaks.
+    return () => clearInterval(timerId);
+
+    // This effect depends on the number of testimonials and the `next` function.
+    // We include `testimonials.length` to ensure the effect re-runs if the
+    // data loads asynchronously (as it does in our tests).
+  }, [testimonials.length, next]);
 
   if (!testimonials || testimonials.length === 0) {
     return null;
