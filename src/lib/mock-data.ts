@@ -1,16 +1,17 @@
-import { Testimonial } from '../components/TestimonialsCarousel';
-
-export const mockTestimonials: Testimonial[] = [
+export const mockTestimonials = [
   {
-    name: 'John Doe',
-    animal: 'Dog',
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    text: 'This is a great place!',
+    id: 1,
+    name: "John Doe",
+    role: "Pet Owner",
+    content: "Great service! My pet was well taken care of.",
+    image: "/images/testimonials/john-doe.jpg",
   },
   {
-    name: 'Jane Smith',
-    animal: 'Cat',
-    image: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?q=80&w=2874&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
-    text: 'I love the staff here!',
+    id: 2,
+    name: "Jane Smith",
+    role: "Animal Lover",
+    content: "Amazing experience with the adoption process.",
+    image: "/images/testimonials/jane-smith.jpg",
   },
+  // Add more mock testimonials as needed
 ];

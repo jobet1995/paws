@@ -1,17 +1,22 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { testimonials } from '@/lib/data';
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { testimonials } from "@/lib/data";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, []);
+
   // Handle case where there are no testimonials to prevent crashing
   if (!testimonials || testimonials.length === 0) {
     return null;
   }
-
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
     setCurrentIndex((prev) => (prev + 1) % testimonials.length);
@@ -22,11 +27,6 @@ export default function TestimonialsCarousel() {
       (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
   };
-
-  useEffect(() => {
-    const timer = setInterval(next, 5000);
-    return () => clearInterval(timer);
-  }, []);
 
   return (
     <div className="bg-amber-50 py-16">
@@ -80,8 +80,8 @@ export default function TestimonialsCarousel() {
                   onClick={() => setCurrentIndex(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === currentIndex
-                      ? 'w-8 bg-amber-600'
-                      : 'w-2 bg-amber-300'
+                      ? "w-8 bg-amber-600"
+                      : "w-2 bg-amber-300"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
