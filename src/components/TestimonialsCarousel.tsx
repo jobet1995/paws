@@ -6,11 +6,11 @@ import { testimonials } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
-  // This guard clause is essential. If there are no testimonials, render nothing.
-  // This prevents the component from crashing when the data is empty.
-  if (!testimonials || testimonials.length === 0) {
-    return null;
-  }
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -24,11 +24,19 @@ export default function TestimonialsCarousel() {
     );
   };
 
-  // Set up an automatic slide transition, but ensure it cleans up after itself.
   useEffect(() => {
-    const timer = setInterval(next, 5000);
-    return () => clearInterval(timer);
-  }, []); // The empty dependency array ensures this effect runs only once.
+    // Only run the timer if the component is mounted and there are testimonials.
+    if (isMounted && testimonials.length > 0) {
+      const timer = setInterval(next, 5000);
+      return () => clearInterval(timer);
+    }
+  }, [isMounted]); // Rerun this effect when isMounted changes.
+
+  // Defer rendering until the component is mounted on the client.
+  // Also, handle the case where there are no testimonials.
+  if (!isMounted || !testimonials || testimonials.length === 0) {
+    return null;
+  }
 
   return (
     <div className="bg-amber-50 py-16">

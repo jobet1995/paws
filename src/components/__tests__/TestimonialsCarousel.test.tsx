@@ -2,46 +2,47 @@ import { render, screen, fireEvent, act } from '@testing-library/react';
 import TestimonialsCarousel from '../TestimonialsCarousel';
 import { ImageProps } from 'next/image';
 
-// Mock next/image to handle the `fill` prop and prevent React warnings.
+// This is the mutable array that our mock will use. We can change it in our tests.
+let mockTestimonials: any[] = [];
+
+// Mock the data module. The mock has a getter for 'testimonials' that returns our mutable array.
+// This allows us to change the data source from within our tests.
+jest.mock('@/lib/data', () => ({
+  __esModule: true,
+  get testimonials() {
+    return mockTestimonials;
+  },
+}));
+
+// Mock next/image
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: ImageProps) => {
-    // The `src` prop from `next/image` has a complex type not compatible with `<img>`.
-    // We destructure it and cast it to a string, which is safe in our tests.
     const { src, fill, ...rest } = props;
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src as string} {...rest} />;
   },
 }));
 
-// Mock the data module. We will control its output for different test cases.
-jest.mock('@/lib/data', () => ({
-  __esModule: true,
-  testimonials: [],
-}));
-
-const mockedData = require('@/lib/data');
-
 describe('TestimonialsCarousel', () => {
-  // Use Jest's fake timers to control setInterval.
   beforeAll(() => {
     jest.useFakeTimers();
   });
 
-  // Clear timers after each test to prevent leaking.
   afterEach(() => {
     jest.clearAllTimers();
+    // Reset the mock data after each test to ensure isolation
+    mockTestimonials = [];
   });
 
-  // Restore real timers when all tests in this file are complete.
   afterAll(() => {
     jest.useRealTimers();
   });
 
   describe('with Data', () => {
     beforeEach(() => {
-      // Provide a full list of testimonials for this test suite.
-      mockedData.testimonials = [
+      // Set the data for this test suite
+      mockTestimonials = [
         { id: '1', name: 'Jennifer Williams', text: 'Text 1', image: 'img1', animal: 'Cat' },
         { id: '2', name: 'David Thompson', text: 'Text 2', image: 'img2', animal: 'Dog' },
       ];
@@ -69,10 +70,8 @@ describe('TestimonialsCarousel', () => {
 
   describe('without Data', () => {
     it('renders nothing when the testimonials array is empty', () => {
-      // Provide an empty array for this test.
-      mockedData.testimonials = [];
+      // The mock is already an empty array by default and due to afterEach
       const { container } = render(<TestimonialsCarousel />);
-      // The guard clause in the component should ensure it returns null.
       expect(container.firstChild).toBeNull();
     });
   });
