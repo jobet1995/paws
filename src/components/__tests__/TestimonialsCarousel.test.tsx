@@ -16,11 +16,13 @@ jest.mock('@/lib/data', () => ({
   },
 }));
 
-// Mock next/image
+// Mock next/image to prevent errors in a non-browser environment
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: ImageProps) => {
-    // Destructure alt explicitly to satisfy the linter
+    // The 'fill' prop is for next/image layout and not a valid <img> attribute.
+    // We destructure it here to prevent it from being passed to the underlying <img>,
+    // which resolves the React warning.
     const { src, alt, fill, ...rest } = props;
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src as string} alt={alt} {...rest} />;
