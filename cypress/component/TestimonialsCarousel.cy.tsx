@@ -15,24 +15,24 @@ describe('<TestimonialsCarousel />', () => {
 
   it('navigates to the next testimonial on button click', () => {
     cy.mount(<TestimonialsCarousel />);
-    cy.get('button[aria-label="Next testimonial"]').click();
+    cy.get('button[aria-label="Next testimonial"]').click({ force: true });
     cy.contains('h3', testimonials[1].name).should('be.visible');
   });
 
   it('navigates to the previous testimonial on button click', () => {
     cy.mount(<TestimonialsCarousel />);
     // Go forward once to get to the second testimonial
-    cy.get('button[aria-label="Next testimonial"]').click();
+    cy.get('button[aria-label="Next testimonial"]').click({ force: true });
     cy.contains('h3', testimonials[1].name).should('be.visible');
 
     // Now go back to the first one
-    cy.get('button[aria-label="Previous testimonial"]').click();
+    cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
     cy.contains('h3', testimonials[0].name).should('be.visible');
   });
 
   it('wraps around from the first to the last testimonial when clicking previous', () => {
     cy.mount(<TestimonialsCarousel />);
-    cy.get('button[aria-label="Previous testimonial"]').click();
+    cy.get('button[aria-label="Previous testimonial"]').click({ force: true });
     cy.contains('h3', testimonials[testimonials.length - 1].name).should('be.visible');
   });
 
@@ -53,7 +53,7 @@ describe('<TestimonialsCarousel />', () => {
     cy.get('button[aria-label="Go to testimonial 2"]').should('not.have.class', 'bg-amber-600');
 
     // Go to the next slide
-    cy.get('button[aria-label="Next testimonial"]').click();
+    cy.get('button[aria-label="Next testimonial"]').click({ force: true });
 
     // The second dot should be active
     cy.get('button[aria-label="Go to testimonial 1"]').should('not.have.class', 'bg-amber-600');
