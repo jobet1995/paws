@@ -9,8 +9,8 @@ describe('Testimonials Carousel E2E', () => {
   });
 
   it('should display the testimonials section and the first testimonial', () => {
-    // Check that the section exists
-    cy.get('section').contains('What Our Adopters Say').should('be.visible');
+    // Check that the section title exists
+    cy.contains('What Our Adopters Say').should('be.visible');
 
     // Check for the first testimonial's content
     cy.contains('h3', testimonials[0].name).should('be.visible');
