@@ -2,7 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import AnimalCard from "@/components/AnimalCard";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import Newsletter from "@/components/Newsletter";
-import { animals, testimonials } from "@/lib/data";
+import { animals } from "@/lib/data";
 import Image from "next/image";
 import { Heart, Users, Chrome as HomeIcon } from "lucide-react";
 import Link from "next/link";

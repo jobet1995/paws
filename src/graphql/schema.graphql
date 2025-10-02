@@ -1,12 +1,107 @@
+type Author {
+  id: ID!
+  name: String!
+  avatar: String
+  bio: String
+  role: String
+}
+
+type Category {
+  id: ID!
+  name: String!
+  slug: String!
+  description: String
+}
+
 type Post {
+  id: ID!
+  title: String!
+  slug: String!
+  excerpt: String
+  content: String!
+  featuredImage: String
+  author: Author!
+  categories: [Category!]!
+  tags: [String!]
+  publishedAt: String!
+  updatedAt: String
+  readingTime: Int
+  status: PostStatus!
+  featured: Boolean!
+  seo: SEO
+}
+
+type SEO {
   title: String
-  date: String
-  content: String
-  author: String
+  description: String
+  keywords: [String!]
   image: String
 }
 
+enum PostStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+input PostFilterInput {
+  status: PostStatus
+  category: ID
+  tag: String
+  featured: Boolean
+  author: ID
+  search: String
+}
+
+input SortInput {
+  field: String!
+  order: SortOrder! = ASC
+}
+
+enum SortOrder {
+  ASC
+  DESC
+}
+
+type PostConnection {
+  edges: [PostEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+type PostEdge {
+  node: Post!
+  cursor: String!
+}
+
+type PageInfo {
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
+  endCursor: String
+}
+
 type Query {
-  posts: [Post]
-  hello: String
+  # Get all posts with optional filtering and pagination
+  posts(
+    first: Int = 10
+    after: String
+    filter: PostFilterInput
+    sort: [SortInput!]
+  ): PostConnection!
+
+  # Get a single post by ID or slug
+  post(id: ID, slug: String): Post
+
+  # Get all categories
+  categories: [Category!]!
+
+  # Get all tags
+  tags: [String!]!
+
+  # Get all authors
+  authors: [Author!]!
+
+  # Search posts by query
+  searchPosts(query: String!, first: Int = 10): [Post!]!
 }
