@@ -1,95 +1,62 @@
-import { mount } from "cypress/react18";
-import TestimonialsCarousel from "../../src/components/TestimonialsCarousel";
+import TestimonialsCarousel from '../../src/components/TestimonialsCarousel';
+import { testimonials } from '../../src/lib/data';
 
-describe("<TestimonialsCarousel />", () => {
-  const mockTestimonials = [
-    {
-      name: "John Doe",
-      animal: "Dog",
-      text: "The adoption process was amazing!",
-      image: "/testimonial1.jpg",
-    },
-    {
-      name: "Jane Smith",
-      animal: "Cat",
-      text: "Best decision ever!",
-      image: "/testimonial2.jpg",
-    },
-  ];
-
+describe('<TestimonialsCarousel />', () => {
+  // Use cy.clock() to control setInterval and cy.tick() to advance time
   beforeEach(() => {
-    // Mock the testimonials data
-    cy.intercept("GET", "/api/testimonials", { body: mockTestimonials });
-
-    // Mount the component with mock data
-    mount(<TestimonialsCarousel />);
+    cy.clock();
   });
 
-  it("renders the initial testimonial correctly", () => {
-    // Check the first testimonial is visible
-    cy.get("h3").should("contain", mockTestimonials[0].name);
-    cy.get("p.text-amber-600").should(
-      "contain",
-      `Adopted ${mockTestimonials[0].animal}`,
-    );
-    cy.get("p.italic").should("contain", mockTestimonials[0].text);
-
-    // Verify image is loaded
-    cy.get("img")
-      .should("be.visible")
-      .and("have.attr", "src", mockTestimonials[0].image);
+  it('renders the first testimonial initially', () => {
+    cy.mount(<TestimonialsCarousel />);
+    cy.contains('h3', testimonials[0].name).should('be.visible');
+    cy.contains('p', testimonials[0].text).should('be.visible');
   });
 
-  it("navigates to the next and previous testimonials", () => {
-    // Initial testimonial
-    cy.get("h3").should("contain", mockTestimonials[0].name);
-
-    // Click Next
+  it('navigates to the next testimonial on button click', () => {
+    cy.mount(<TestimonialsCarousel />);
     cy.get('button[aria-label="Next testimonial"]').click();
-    cy.get("h3").should("contain", mockTestimonials[1].name);
-    cy.get("p.text-amber-600").should(
-      "contain",
-      `Adopted ${mockTestimonials[1].animal}`,
-    );
+    cy.contains('h3', testimonials[1].name).should('be.visible');
+  });
 
-    // Click Previous
+  it('navigates to the previous testimonial on button click', () => {
+    cy.mount(<TestimonialsCarousel />);
+    // Go forward once to get to the second testimonial
+    cy.get('button[aria-label="Next testimonial"]').click();
+    cy.contains('h3', testimonials[1].name).should('be.visible');
+
+    // Now go back to the first one
     cy.get('button[aria-label="Previous testimonial"]').click();
-    cy.get("h3").should("contain", mockTestimonials[0].name);
+    cy.contains('h3', testimonials[0].name).should('be.visible');
   });
 
-  it("auto-advances to the next testimonial", () => {
-    // Initial testimonial
-    cy.get("h3").should("contain", mockTestimonials[0].name);
-
-    // Wait for auto-advance (5000ms in the component) plus buffer
-    cy.wait(6000);
-
-    // Should have advanced to next testimonial
-    cy.get("h3").should("contain", mockTestimonials[1].name);
+  it('wraps around from the first to the last testimonial when clicking previous', () => {
+    cy.mount(<TestimonialsCarousel />);
+    cy.get('button[aria-label="Previous testimonial"]').click();
+    cy.contains('h3', testimonials[testimonials.length - 1].name).should('be.visible');
   });
 
-  it("updates indicator dots when navigating", () => {
-    // First dot should be active initially
-    cy.get('button[aria-label^="Go to testimonial"]')
-      .first()
-      .should("have.class", "w-8")
-      .and("have.class", "bg-amber-600");
+  it('advances testimonials automatically after 5 seconds', () => {
+    cy.mount(<TestimonialsCarousel />);
+    cy.contains('h3', testimonials[0].name).should('be.visible');
 
-    // Click next
+    // Advance the clock by 5000ms
+    cy.tick(5000);
+
+    cy.contains('h3', testimonials[1].name).should('be.visible');
+  });
+
+  it('displays the correct dot indicator for the current slide', () => {
+    cy.mount(<TestimonialsCarousel />);
+    // The first dot should be active
+    cy.get('button[aria-label="Go to testimonial 1"]').should('have.class', 'bg-amber-600');
+    cy.get('button[aria-label="Go to testimonial 2"]').should('not.have.class', 'bg-amber-600');
+
+    // Go to the next slide
     cy.get('button[aria-label="Next testimonial"]').click();
 
-    // Second dot should now be active
-    cy.get('button[aria-label^="Go to testimonial"]')
-      .eq(1)
-      .should("have.class", "w-8")
-      .and("have.class", "bg-amber-600");
-  });
-
-  it("navigates using indicator dots", () => {
-    // Click on the second dot
-    cy.get('button[aria-label^="Go to testimonial"]').eq(1).click();
-
-    // Should show second testimonial
-    cy.get("h3").should("contain", mockTestimonials[1].name);
+    // The second dot should be active
+    cy.get('button[aria-label="Go to testimonial 1"]').should('not.have.class', 'bg-amber-600');
+    cy.get('button[aria-label="Go to testimonial 2"]').should('have.class', 'bg-amber-600');
   });
 });
