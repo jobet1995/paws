@@ -6,12 +6,6 @@ import { testimonials } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
@@ -25,13 +19,13 @@ export default function TestimonialsCarousel() {
   };
 
   useEffect(() => {
-    if (isMounted && testimonials.length > 0) {
+    if (testimonials.length > 0) {
       const timer = setInterval(next, 5000);
       return () => clearInterval(timer);
     }
-  }, [isMounted, currentIndex]);
+  }, []);
 
-  if (!isMounted || !testimonials || testimonials.length === 0) {
+  if (!testimonials || testimonials.length === 0) {
     return null;
   }
 
