@@ -2,8 +2,7 @@ import HeroSection from "@/components/HeroSection";
 import AnimalCard from "@/components/AnimalCard";
 import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import Newsletter from "@/components/Newsletter";
-import { animals } from "@/lib/data";
-import { testimonials } from "@/lib/testimonials";
+import { animals, testimonials } from "@/lib/data";
 import Image from "next/image";
 import { Heart, Users, Chrome as HomeIcon } from "lucide-react";
 import Link from "next/link";
@@ -74,7 +73,7 @@ export default function Home() {
         </div>
       </section>
 
-      <TestimonialsCarousel testimonials={testimonials} />
+      <TestimonialsCarousel />
 
       <section className="py-16 bg-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
