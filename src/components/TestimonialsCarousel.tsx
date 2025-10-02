@@ -14,45 +14,24 @@ export default function TestimonialsCarousel() {
 
   const prev = () => {
     setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
     );
   };
 
   useEffect(() => {
-    // Only set up the interval if there are testimonials. This prevents errors
-    // when the data is not yet available or the array is empty.
-    if (testimonials.length === 0) {
-      return;
-    }
-
-    // Set up the timer to advance the slide.
-    const timerId = setInterval(next, 5000);
-
-    // The cleanup function clears the timer when the component unmounts
-    // or when the effect re-runs, preventing memory leaks.
-    return () => clearInterval(timerId);
-
-    // This effect depends on the number of testimonials and the `next` function.
-    // We include `testimonials.length` to ensure the effect re-runs if the
-    // data loads asynchronously (as it does in our tests).
-  }, [testimonials.length, next]);
-
-  if (!testimonials || testimonials.length === 0) {
-    return null;
-  }
+    const timer = setInterval(next, 5000);
+    return () => clearInterval(timer);
+  }, []);
 
   return (
     <div className="bg-amber-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
-          What Our Adopters Say
+          Happy Tails
         </h2>
 
         <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          <Quote
-            aria-hidden="true"
-            className="absolute top-6 left-6 h-12 w-12 text-amber-200"
-          />
+          <Quote className="absolute top-6 left-6 h-12 w-12 text-amber-200" />
 
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
@@ -61,8 +40,8 @@ export default function TestimonialsCarousel() {
                   src={testimonials[currentIndex].image}
                   alt={testimonials[currentIndex].name}
                   fill
-                  sizes="(max-width: 768px) 100vw, 50vw"
                   className="object-cover"
+                  sizes="(max-width: 768px) 100vw, 33vw"
                 />
               </div>
               <div className="text-center md:text-left">
@@ -76,7 +55,7 @@ export default function TestimonialsCarousel() {
             </div>
 
             <p className="text-gray-700 text-lg leading-relaxed italic mb-8">
-              &ldquo;{testimonials[currentIndex].text}&rdquo;
+              &quot;{testimonials[currentIndex].text}&quot;
             </p>
           </div>
 
