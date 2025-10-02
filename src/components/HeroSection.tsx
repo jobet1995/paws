@@ -2,14 +2,14 @@ import Link from "next/link";
 
 export default function HeroSection() {
   return (
-    <div className="relative h-[600px] flex items-center justify-center">
+    <div className="relative h-[80vh] min-h-[500px] flex items-center justify-center">
       <div
         className="absolute inset-0 z-0"
         style={{
           backgroundImage:
             "url(https://images.pexels.com/photos/4587998/pexels-photo-4587998.jpeg?auto=compress&cs=tinysrgb&w=1920)",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          backgroundPosition: "center 65%",
         }}
       >
         <div className="absolute inset-0 bg-black/50" />
