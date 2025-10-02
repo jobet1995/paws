@@ -23,7 +23,7 @@ export default function TestimonialsCarousel() {
       const timer = setInterval(next, 5000);
       return () => clearInterval(timer);
     }
-  }, []);
+  }, [currentIndex]);
 
   if (!testimonials || testimonials.length === 0) {
     return null;
