@@ -1,13 +1,16 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import TestimonialsCarousel from '../TestimonialsCarousel';
+import { ImageProps } from 'next/image';
 
 // Mock next/image to handle the `fill` prop and prevent React warnings.
 jest.mock('next/image', () => ({
   __esModule: true,
-  default: (props: any) => {
-    const { fill, ...rest } = props;
+  default: (props: ImageProps) => {
+    // The `src` prop from `next/image` has a complex type not compatible with `<img>`.
+    // We destructure it and cast it to a string, which is safe in our tests.
+    const { src, fill, ...rest } = props;
     // eslint-disable-next-line @next/next/no-img-element
-    return <img {...rest} />;
+    return <img src={src as string} {...rest} />;
   },
 }));
 
