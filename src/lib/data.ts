@@ -268,7 +268,7 @@ export const testimonials: Testimonial[] = [
     name: "Jennifer Williams",
     text: "Adopting Luna from this shelter was the best decision we ever made. The staff was so helpful and made sure we were a perfect match. Luna has brought so much joy to our family!",
     image:
-      "https://images.pexels.com/photos/1805164/pexels-photo-1805164.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=800",
     animal: "Luna - Siamese Cat",
   },
   {
@@ -276,7 +276,7 @@ export const testimonials: Testimonial[] = [
     name: "David Thompson",
     text: "The adoption process was smooth and the team really cares about finding the right homes for their animals. Charlie is the perfect companion and we could not be happier!",
     image:
-      "https://images.pexels.com/photos/1851164/pexels-photo-1851164.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/1222271/pexels-photo-1222271.jpeg?auto=compress&cs=tinysrgb&w=800",
     animal: "Charlie - Beagle Mix",
   },
   {
@@ -284,7 +284,7 @@ export const testimonials: Testimonial[] = [
     name: "Maria Garcia",
     text: "I was nervous about adopting my first pet, but the shelter staff provided amazing support and guidance. Bella is now a beloved member of our family. Thank you!",
     image:
-      "https://images.pexels.com/photos/1183434/pexels-photo-1183434.jpeg?auto=compress&cs=tinysrgb&w=800",
+      "https://images.pexels.com/photos/712521/pexels-photo-712521.jpeg?auto=compress&cs=tinysrgb&w=800",
     animal: "Bella - Tabby Cat",
   },
 ];
