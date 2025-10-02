@@ -1,17 +1,11 @@
+"use client";
 
-'use client';
-
-import { useState, useEffect } from 'react';
-import Image from 'next/image';
-import { testimonials } from '@/lib/data';
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { useState, useEffect } from "react";
+import Image from "next/image";
+import { testimonials } from "@/lib/data";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
-  // Handle case where there are no testimonials to prevent crashing
-  if (!testimonials || testimonials.length === 0) {
-    return null;
-  }
-
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
@@ -36,18 +30,19 @@ export default function TestimonialsCarousel() {
           Happy Tails
         </h2>
 
-        <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12 flex flex-col min-h-[450px]">
+        <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
           <Quote className="absolute top-6 left-6 h-12 w-12 text-amber-200" />
 
-          <div className="relative flex-grow">
+          <div className="relative z-10">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
               <div className="relative w-24 h-24 rounded-full border-4 border-amber-200 overflow-hidden">
                 <Image
                   src={testimonials[currentIndex].image}
                   alt={testimonials[currentIndex].name}
-                  fill
-                  className="object-cover"
-                  sizes="96px"
+                  width={96}
+                  height={96}
+                  className="object-cover w-full h-full"
+                  priority
                 />
               </div>
               <div className="text-center md:text-left">
@@ -60,12 +55,12 @@ export default function TestimonialsCarousel() {
               </div>
             </div>
 
-            <p className="text-gray-700 text-lg leading-relaxed italic">
+            <p className="text-gray-700 text-lg leading-relaxed italic mb-8">
               &ldquo;{testimonials[currentIndex].text}&rdquo;
             </p>
           </div>
 
-          <div className="flex-shrink-0 pt-8 flex justify-between items-center">
+          <div className="flex justify-between items-center">
             <button
               onClick={prev}
               className="p-2 rounded-full bg-amber-100 hover:bg-amber-200 transition-colors"
@@ -81,8 +76,8 @@ export default function TestimonialsCarousel() {
                   onClick={() => setCurrentIndex(index)}
                   className={`h-2 rounded-full transition-all duration-300 ${
                     index === currentIndex
-                      ? 'w-8 bg-amber-600'
-                      : 'w-2 bg-amber-300'
+                      ? "w-8 bg-amber-600"
+                      : "w-2 bg-amber-300"
                   }`}
                   aria-label={`Go to testimonial ${index + 1}`}
                 />
