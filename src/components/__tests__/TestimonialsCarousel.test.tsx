@@ -1,14 +1,16 @@
 import { render, screen, fireEvent, act } from '@testing-library/react';
 import TestimonialsCarousel from '../TestimonialsCarousel';
 import { ImageProps } from 'next/image';
+import { Testimonial } from '@/lib/data';
 
 // This is the mutable array that our mock will use. We can change it in our tests.
-let mockTestimonials: any[] = [];
+let mockTestimonials: Testimonial[] = [];
 
 // Mock the data module. The mock has a getter for 'testimonials' that returns our mutable array.
 // This allows us to change the data source from within our tests.
 jest.mock('@/lib/data', () => ({
   __esModule: true,
+  // Use a getter to ensure the mock always returns the latest value of mockTestimonials
   get testimonials() {
     return mockTestimonials;
   },
@@ -18,9 +20,10 @@ jest.mock('@/lib/data', () => ({
 jest.mock('next/image', () => ({
   __esModule: true,
   default: (props: ImageProps) => {
-    const { src, fill, ...rest } = props;
+    // Destructure alt explicitly to satisfy the linter
+    const { src, alt, fill, ...rest } = props;
     // eslint-disable-next-line @next/next/no-img-element
-    return <img src={src as string} {...rest} />;
+    return <img src={src as string} alt={alt} {...rest} />;
   },
 }));
 
