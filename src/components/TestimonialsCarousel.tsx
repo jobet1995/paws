@@ -25,15 +25,12 @@ export default function TestimonialsCarousel() {
   };
 
   useEffect(() => {
-    // Only run the timer if the component is mounted and there are testimonials.
     if (isMounted && testimonials.length > 0) {
       const timer = setInterval(next, 5000);
       return () => clearInterval(timer);
     }
-  }, [isMounted]); // Rerun this effect when isMounted changes.
+  }, [isMounted, currentIndex]);
 
-  // Defer rendering until the component is mounted on the client.
-  // Also, handle the case where there are no testimonials.
   if (!isMounted || !testimonials || testimonials.length === 0) {
     return null;
   }
@@ -42,7 +39,7 @@ export default function TestimonialsCarousel() {
     <div className="bg-amber-50 py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">
-          Happy Tails
+          What Our Adopters Say
         </h2>
 
         <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
