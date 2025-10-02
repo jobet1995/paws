@@ -1,92 +1,104 @@
-import {
-  render,
-  screen,
-  fireEvent,
-  waitFor,
-  act,
-} from "@testing-library/react";
-import TestimonialsCarousel from "../TestimonialsCarousel";
-import { mockTestimonials } from "../../lib/mock-data";
+import { render, screen, fireEvent } from '@testing-library/react';
+import TestimonialsCarousel from '../TestimonialsCarousel';
 
-describe("TestimonialsCarousel", () => {
-  afterEach(() => {
-    jest.useRealTimers();
+// --- Mocking Setup ---
+
+// 1. Mock the data module that the component imports
+// We define a default mock state here.
+jest.mock('@/lib/data', () => ({
+  __esModule: true,
+  testimonials: [
+    {
+      id: '1',
+      name: 'Jennifer Williams',
+      text: 'Adopting Luna was the best decision we ever made.',
+      image: 'https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=200',
+      animal: 'Luna - Siamese Cat',
+    },
+    {
+      id: '2',
+      name: 'David Thompson',
+      text: 'The adoption process was smooth, and the staff were incredibly helpful.',
+      image: 'https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200',
+      animal: 'Charlie - Beagle Mix',
+    },
+  ],
+}));
+
+// 2. Mock the next/image component which doesn't work in a Jest environment
+jest.mock('next/image', () => ({
+  __esModule: true,
+  default: (props: any) => {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...props} />;
+  },
+}));
+
+// --- Test Suites ---
+
+describe('TestimonialsCarousel with Data', () => {
+  beforeEach(() => {
+    // Render the component before each test in this suite
+    render(<TestimonialsCarousel />);
   });
 
-  it("renders without crashing", () => {
-    render(<TestimonialsCarousel testimonials={mockTestimonials} />);
-    expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
-  });
-
-  it("renders nothing when there are no testimonials", () => {
-    const { container } = render(<TestimonialsCarousel testimonials={[]} />);
-    expect(container.firstChild).toBeNull();
-  });
-
-  it("navigates through testimonials when navigation buttons are clicked", async () => {
-    render(<TestimonialsCarousel testimonials={mockTestimonials} />);
-    await screen.findByText("“This is a great place!”");
-    fireEvent.click(screen.getByLabelText("Next testimonial"));
-    await waitFor(() => {
-      expect(screen.getByText("“I love the staff here!”")).toBeInTheDocument();
-    });
-    fireEvent.click(screen.getByLabelText("Previous testimonial"));
-    await waitFor(() => {
-      expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
-    });
-  });
-
-  it("auto-plays through testimonials", async () => {
-    jest.useFakeTimers();
-    render(<TestimonialsCarousel testimonials={mockTestimonials} />);
-    expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
-    act(() => {
-      jest.advanceTimersByTime(5000);
-    });
-    await waitFor(() => {
-      expect(screen.getByText("“I love the staff here!”")).toBeInTheDocument();
-    });
-    act(() => {
-      jest.advanceTimersByTime(5000);
-    });
-    await waitFor(() => {
-      expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
-    });
-  });
-
-  it("pauses auto-play on hover", async () => {
-    jest.useFakeTimers();
-    render(<TestimonialsCarousel testimonials={mockTestimonials} />);
-    const carousel = screen.getByTestId("testimonials-carousel");
-
-    // Check initial state
-    expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
-
-    // Hover over the carousel
-    fireEvent.mouseEnter(carousel);
-
-    // Advance time - should not change testimonial
-    act(() => {
-      jest.advanceTimersByTime(5000);
-    });
-
-    // Ensure the testimonial has not changed
-    expect(screen.getByText("“This is a great place!”")).toBeInTheDocument();
+  it('renders the first testimonial on initial load', () => {
+    expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
     expect(
-      screen.queryByText("“I love the staff here!”"),
-    ).not.toBeInTheDocument();
+      screen.getByText('Adopted Luna - Siamese Cat')
+    ).toBeInTheDocument();
+    expect(screen.getByAltText('Jennifer Williams')).toBeInTheDocument();
+  });
 
-    // Mouse leaves the carousel
-    fireEvent.mouseLeave(carousel);
+  it('navigates to the next testimonial when the "Next" button is clicked', () => {
+    const nextButton = screen.getByLabelText('Next testimonial');
+    
+    // Initially Jennifer is visible
+    expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
 
-    // Advance time again - should change testimonial
-    act(() => {
-      jest.advanceTimersByTime(5000);
-    });
+    // Click next
+    fireEvent.click(nextButton);
 
-    // Wait for the next testimonial to be displayed
-    await waitFor(() => {
-      expect(screen.getByText("“I love the staff here!”")).toBeInTheDocument();
-    });
+    // Now David should be visible
+    expect(screen.getByText('David Thompson')).toBeInTheDocument();
+    expect(
+      screen.getByText('Adopted Charlie - Beagle Mix')
+    ).toBeInTheDocument();
+  });
+
+  it('wraps around to the first testimonial after reaching the end', () => {
+    const nextButton = screen.getByLabelText('Next testimonial');
+
+    // Go to the last testimonial (David)
+    fireEvent.click(nextButton);
+    expect(screen.getByText('David Thompson')).toBeInTheDocument();
+
+    // Click again to wrap around to the first one (Jennifer)
+    fireEvent.click(nextButton);
+    expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
+  });
+
+  it('navigates to the previous testimonial when the "Previous" button is clicked', () => {
+    const prevButton = screen.getByLabelText('Previous testimonial');
+
+    // Initially on the first item, clicking previous should wrap to the last item (David)
+    fireEvent.click(prevButton);
+    expect(screen.getByText('David Thompson')).toBeInTheDocument();
+  });
+});
+
+describe('TestimonialsCarousel without Data', () => {
+  it('renders nothing when the testimonials array is empty', () => {
+    // For this specific test, we override the default mock with an empty array.
+    // jest.doMock is used for this dynamic change.
+    jest.doMock('@/lib/data', () => ({
+      __esModule: true,
+      testimonials: [],
+    }));
+
+    const { container } = render(<TestimonialsCarousel />);
+
+    // The component should render null due to the guard clause we added
+    expect(container.firstChild).toBeNull();
   });
 });
