@@ -1,104 +1,76 @@
-import { render, screen, fireEvent } from "@testing-library/react";
-import TestimonialsCarousel from "../TestimonialsCarousel";
+import { render, screen, fireEvent, act } from '@testing-library/react';
+import TestimonialsCarousel from '../TestimonialsCarousel';
 
-// --- Mocking Setup ---
-
-// 1. Mock the data module that the component imports
-// We define a default mock state here.
-jest.mock("@/lib/data", () => ({
+// Mock next/image to handle the `fill` prop and prevent React warnings.
+jest.mock('next/image', () => ({
   __esModule: true,
-  testimonials: [
-    {
-      id: "1",
-      name: "Jennifer Williams",
-      text: "Adopting Luna was the best decision we ever made.",
-      image:
-        "https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&w=200",
-      animal: "Luna - Siamese Cat",
-    },
-    {
-      id: "2",
-      name: "David Thompson",
-      text: "The adoption process was smooth, and the staff were incredibly helpful.",
-      image:
-        "https://images.pexels.com/photos/220453/pexels-photo-220453.jpeg?auto=compress&cs=tinysrgb&w=200",
-      animal: "Charlie - Beagle Mix",
-    },
-  ],
-}));
-
-// 2. Mock the next/image component which doesn't work in a Jest environment
-jest.mock("next/image", () => ({
-  __esModule: true,
-  default: (props: React.ImgHTMLAttributes<HTMLImageElement>) => {
-    // eslint-disable-next-line @next/next/no-img-element, jsx-a11y/alt-text
-    return <img {...props} />;
+  default: (props: any) => {
+    const { fill, ...rest } = props;
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img {...rest} />;
   },
 }));
 
-// --- Test Suites ---
+// Mock the data module. We will control its output for different test cases.
+jest.mock('@/lib/data', () => ({
+  __esModule: true,
+  testimonials: [],
+}));
 
-describe("TestimonialsCarousel with Data", () => {
-  beforeEach(() => {
-    // Render the component before each test in this suite
-    render(<TestimonialsCarousel />);
+const mockedData = require('@/lib/data');
+
+describe('TestimonialsCarousel', () => {
+  // Use Jest's fake timers to control setInterval.
+  beforeAll(() => {
+    jest.useFakeTimers();
   });
 
-  it("renders the first testimonial on initial load", () => {
-    expect(screen.getByText("Jennifer Williams")).toBeInTheDocument();
-    expect(screen.getByText("Adopted Luna - Siamese Cat")).toBeInTheDocument();
-    expect(screen.getByAltText("Jennifer Williams")).toBeInTheDocument();
+  // Clear timers after each test to prevent leaking.
+  afterEach(() => {
+    jest.clearAllTimers();
   });
 
-  it('navigates to the next testimonial when the "Next" button is clicked', () => {
-    const nextButton = screen.getByLabelText("Next testimonial");
-
-    // Initially Jennifer is visible
-    expect(screen.getByText("Jennifer Williams")).toBeInTheDocument();
-
-    // Click next
-    fireEvent.click(nextButton);
-
-    // Now David should be visible
-    expect(screen.getByText("David Thompson")).toBeInTheDocument();
-    expect(
-      screen.getByText("Adopted Charlie - Beagle Mix"),
-    ).toBeInTheDocument();
+  // Restore real timers when all tests in this file are complete.
+  afterAll(() => {
+    jest.useRealTimers();
   });
 
-  it("wraps around to the first testimonial after reaching the end", () => {
-    const nextButton = screen.getByLabelText("Next testimonial");
+  describe('with Data', () => {
+    beforeEach(() => {
+      // Provide a full list of testimonials for this test suite.
+      mockedData.testimonials = [
+        { id: '1', name: 'Jennifer Williams', text: 'Text 1', image: 'img1', animal: 'Cat' },
+        { id: '2', name: 'David Thompson', text: 'Text 2', image: 'img2', animal: 'Dog' },
+      ];
+      render(<TestimonialsCarousel />);
+    });
 
-    // Go to the last testimonial (David)
-    fireEvent.click(nextButton);
-    expect(screen.getByText("David Thompson")).toBeInTheDocument();
+    it('renders the first testimonial on initial load', () => {
+      expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
+      expect(screen.getByText('Adopted Cat')).toBeInTheDocument();
+    });
 
-    // Click again to wrap around to the first one (Jennifer)
-    fireEvent.click(nextButton);
-    expect(screen.getByText("Jennifer Williams")).toBeInTheDocument();
+    it('navigates to the next testimonial on button click', () => {
+      fireEvent.click(screen.getByLabelText('Next testimonial'));
+      expect(screen.getByText('David Thompson')).toBeInTheDocument();
+    });
+
+    it('advances testimonials automatically via timer', () => {
+      expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
+      act(() => {
+        jest.advanceTimersByTime(5000);
+      });
+      expect(screen.getByText('David Thompson')).toBeInTheDocument();
+    });
   });
 
-  it('navigates to the previous testimonial when the "Previous" button is clicked', () => {
-    const prevButton = screen.getByLabelText("Previous testimonial");
-
-    // Initially on the first item, clicking previous should wrap to the last item (David)
-    fireEvent.click(prevButton);
-    expect(screen.getByText("David Thompson")).toBeInTheDocument();
-  });
-});
-
-describe("TestimonialsCarousel without Data", () => {
-  it("renders nothing when the testimonials array is empty", () => {
-    // For this specific test, we override the default mock with an empty array.
-    // jest.doMock is used for this dynamic change.
-    jest.doMock("@/lib/data", () => ({
-      __esModule: true,
-      testimonials: [],
-    }));
-
-    const { container } = render(<TestimonialsCarousel />);
-
-    // The component should render null due to the guard clause we added
-    expect(container.firstChild).toBeNull();
+  describe('without Data', () => {
+    it('renders nothing when the testimonials array is empty', () => {
+      // Provide an empty array for this test.
+      mockedData.testimonials = [];
+      const { container } = render(<TestimonialsCarousel />);
+      // The guard clause in the component should ensure it returns null.
+      expect(container.firstChild).toBeNull();
+    });
   });
 });

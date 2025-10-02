@@ -6,6 +6,12 @@ import { testimonials } from "@/lib/data";
 import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 
 export default function TestimonialsCarousel() {
+  // This guard clause is essential. If there are no testimonials, render nothing.
+  // This prevents the component from crashing when the data is empty.
+  if (!testimonials || testimonials.length === 0) {
+    return null;
+  }
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   const next = () => {
@@ -14,14 +20,15 @@ export default function TestimonialsCarousel() {
 
   const prev = () => {
     setCurrentIndex(
-      (prev) => (prev - 1 + testimonials.length) % testimonials.length,
+      (prev) => (prev - 1 + testimonials.length) % testimonials.length
     );
   };
 
+  // Set up an automatic slide transition, but ensure it cleans up after itself.
   useEffect(() => {
     const timer = setInterval(next, 5000);
     return () => clearInterval(timer);
-  }, []);
+  }, []); // The empty dependency array ensures this effect runs only once.
 
   return (
     <div className="bg-amber-50 py-16">
@@ -31,7 +38,10 @@ export default function TestimonialsCarousel() {
         </h2>
 
         <div className="relative bg-white rounded-2xl shadow-xl p-8 md:p-12">
-          <Quote className="absolute top-6 left-6 h-12 w-12 text-amber-200" />
+          <Quote
+            aria-hidden="true"
+            className="absolute top-6 left-6 h-12 w-12 text-amber-200"
+          />
 
           <div className="relative z-10">
             <div className="flex flex-col md:flex-row items-center gap-8 mb-6">
