@@ -1,14 +1,14 @@
-import { render, screen, fireEvent, act } from '@testing-library/react';
-import TestimonialsCarousel from '../TestimonialsCarousel';
-import { ImageProps } from 'next/image';
-import { Testimonial } from '@/lib/data';
+import { render, screen, fireEvent, act } from "@testing-library/react";
+import TestimonialsCarousel from "../TestimonialsCarousel";
+import { ImageProps } from "next/image";
+import { Testimonial } from "@/lib/data";
 
 // This is the mutable array that our mock will use. We can change it in our tests.
 let mockTestimonials: Testimonial[] = [];
 
 // Mock the data module. The mock has a getter for 'testimonials' that returns our mutable array.
 // This allows us to change the data source from within our tests.
-jest.mock('@/lib/data', () => ({
+jest.mock("@/lib/data", () => ({
   __esModule: true,
   // Use a getter to ensure the mock always returns the latest value of mockTestimonials
   get testimonials() {
@@ -17,19 +17,19 @@ jest.mock('@/lib/data', () => ({
 }));
 
 // Mock next/image to prevent errors in a non-browser environment
-jest.mock('next/image', () => ({
+jest.mock("next/image", () => ({
   __esModule: true,
   default: (props: ImageProps) => {
     // The 'fill' prop is for next/image layout and not a valid <img> attribute.
     // We destructure it here to prevent it from being passed to the underlying <img>,
     // which resolves the React warning.
-    const { src, alt, fill, ...rest } = props;
+    const { src, alt, ...rest } = props;
     // eslint-disable-next-line @next/next/no-img-element
     return <img src={src as string} alt={alt} {...rest} />;
   },
 }));
 
-describe('TestimonialsCarousel', () => {
+describe("TestimonialsCarousel", () => {
   beforeAll(() => {
     jest.useFakeTimers();
   });
@@ -44,37 +44,49 @@ describe('TestimonialsCarousel', () => {
     jest.useRealTimers();
   });
 
-  describe('with Data', () => {
+  describe("with Data", () => {
     beforeEach(() => {
       // Set the data for this test suite
       mockTestimonials = [
-        { id: '1', name: 'Jennifer Williams', text: 'Text 1', image: 'img1', animal: 'Cat' },
-        { id: '2', name: 'David Thompson', text: 'Text 2', image: 'img2', animal: 'Dog' },
+        {
+          id: "1",
+          name: "Jennifer Williams",
+          text: "Text 1",
+          image: "img1",
+          animal: "Cat",
+        },
+        {
+          id: "2",
+          name: "David Thompson",
+          text: "Text 2",
+          image: "img2",
+          animal: "Dog",
+        },
       ];
       render(<TestimonialsCarousel />);
     });
 
-    it('renders the first testimonial on initial load', () => {
-      expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
-      expect(screen.getByText('Adopted Cat')).toBeInTheDocument();
+    it("renders the first testimonial on initial load", () => {
+      expect(screen.getByText("Jennifer Williams")).toBeInTheDocument();
+      expect(screen.getByText("Adopted Cat")).toBeInTheDocument();
     });
 
-    it('navigates to the next testimonial on button click', () => {
-      fireEvent.click(screen.getByLabelText('Next testimonial'));
-      expect(screen.getByText('David Thompson')).toBeInTheDocument();
+    it("navigates to the next testimonial on button click", () => {
+      fireEvent.click(screen.getByLabelText("Next testimonial"));
+      expect(screen.getByText("David Thompson")).toBeInTheDocument();
     });
 
-    it('advances testimonials automatically via timer', () => {
-      expect(screen.getByText('Jennifer Williams')).toBeInTheDocument();
+    it("advances testimonials automatically via timer", () => {
+      expect(screen.getByText("Jennifer Williams")).toBeInTheDocument();
       act(() => {
         jest.advanceTimersByTime(5000);
       });
-      expect(screen.getByText('David Thompson')).toBeInTheDocument();
+      expect(screen.getByText("David Thompson")).toBeInTheDocument();
     });
   });
 
-  describe('without Data', () => {
-    it('renders nothing when the testimonials array is empty', () => {
+  describe("without Data", () => {
+    it("renders nothing when the testimonials array is empty", () => {
       // The mock is already an empty array by default and due to afterEach
       const { container } = render(<TestimonialsCarousel />);
       expect(container.firstChild).toBeNull();
