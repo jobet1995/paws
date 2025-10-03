@@ -82,6 +82,9 @@ type PageInfo {
 }
 
 type Query {
+  # A simple hello world query
+  hello: String!
+
   # Get all posts with optional filtering and pagination
   posts(
     first: Int = 10

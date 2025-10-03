@@ -268,6 +268,8 @@ function paginatePosts(
 
 export const blogResolvers = {
   Query: {
+    // A simple hello world query
+    hello: () => "Hello from Paws & Hearts Shelter API!",
     posts: async (
       _: unknown,
       {
